@@ -1,4 +1,4 @@
-# Flask React App
+# Flask React App - using React CDN (Version 1.0) with Flask Blueprints
 [Flask](https://github.com/pallets/flask) is a lightweight WSGI web application framework. It is designed to make getting started quick and easy, with the ability to scale up to complex applications using several [plugins](https://github.com/humiaozuzu/awesome-flask).
 > Flask version used is 2.1.2
 ## 1. [Virtual Environments](https://realpython.com/pipenv-guide/)
@@ -78,5 +78,6 @@ Flask Assets allow you to compile your web assets into common files of concern d
 
 ## Credits
 1. Todd Birchard - [hackersandslackers Flask Tutorial](https://hackersandslackers.com/series/build-flask-apps/)
-2. Bob Ziroll - [Learn React For Beginners](https://scrimba.com/learn/learnreact)
-3. Real Python - [Flask Tutorial](https://realpython.com/python-web-applications-with-flask-part-i/)
+2. Learn React - [Learn React For Beginners by Bob Ziroll](https://scrimba.com/learn/learnreact)
+3. React Tutorial - [Blog by Tania Rascia](https://www.taniarascia.com/getting-started-with-react/)
+4. Real Python - [Flask Tutorial](https://realpython.com/python-web-applications-with-flask-part-i/)
