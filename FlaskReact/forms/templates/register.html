@@ -1,0 +1,30 @@
+{% extends 'forms.html' %}
+{% from '_formhelpers.html' import render_field %}
+
+{% block title %}Register{% endblock %}
+{% block content %}
+
+  <form method="post" class="form">
+    <!-- {{ form.crsf_token }}
+
+    {{ form.hidden_tag() }} -->
+
+    {{ render_field (form.name, class = 'form-control first-input', placeholder = form.name.label.text, required = true, autofocus = true) }}
+      
+    {{ render_field (form.email, class = 'form-control', type='email', placeholder = form.email.label.text, required = true) }}
+    
+    {{ render_field (form.password, class= 'form-control', placeholder = form.password.label.text, required = true) }}
+     
+    {{ render_field (form.confirm, class= 'form-control last-input', placeholder = form.confirm.label.text, required = true) }}
+
+    {{ render_field (form.terms, class= 'pull-left', required = true) }} 
+    <p class="terms">I give full consent to participate in the study and are in agreement with the <a href="{{ url_for('consent') }}">consent information</a> provided</p>
+    
+    <input type="submit" value="Sign Up" class="mdc-button mdc-button--raised next mdc-ripple-upgraded" style="
+    width: 99%;">
+
+    <h6 style="margin-top: 4%; text-align: center;">Already signed up? <a href="{{ url_for('login') }}"> Login </a></h6>
+  
+  </form>
+
+{% endblock %}

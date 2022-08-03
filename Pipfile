@@ -6,6 +6,11 @@ name = "pypi"
 [packages]
 flask = "*"
 flask-assets = "*"
+flask-sqlalchemy = "*"
+pymysql = "*"
+python-dotenv = "*"
+mysql-connector = "*"
+mysql-connector-python = "*"
 
 [dev-packages]
 
