@@ -1,0 +1,44 @@
+{% extends 'forms.html' %}
+{% from '_formhelpers.html' import render_field %}
+
+{% block title %}Login{% endblock %}
+{% block content %}
+
+  <form method="post" class="form">
+    <!-- {{ form.crsf_token }}
+
+    {{ form.hidden_tag() }} -->
+
+    {{ render_field (form.email, class = 'form-control', type ='email', placeholder = form.email.label.text, required = true, autofocus = true) }}
+    
+    {{ render_field (form.password, class = 'form-control', placeholder = form.password.label.text, required = true) }}
+    
+    {{ render_field (form.remember, class= 'pull-left') }} 
+    <p class="terms">Remember Me</p>
+
+    <input type="submit" value="Login" class="mdc-button mdc-button--raised next mdc-ripple-upgraded" style="
+    width: 99%;">
+
+    <p class="pull-left"><a href="{{ url_for('forgot') }}">Forgot Password?</a></p>
+    <p class="pull-right"><a href="{{ url_for('register') }}">Register</a></p>
+    
+  </form>
+
+{% endblock %}
+
+{% block success_registering %}
+  <div class="flashes">
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        {% for message in messages %}
+          <div class="alert alert-info alert-dismissible fade show" role="alert">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+            {{ message }}
+          </div>
+        {% endfor %}
+      {% endif %}
+  {% endwith %}
+  </div>
+{% endblock %}

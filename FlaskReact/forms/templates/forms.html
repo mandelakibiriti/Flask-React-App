@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <!-- meta -->
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <title> {% block title %} {% endblock %} </title>
+
+        <!-- styles -->
+        {% assets "home.css" %}
+        <link
+            href="{{ ASSET_URL }}"
+            rel="stylesheet"
+            type="text/css"
+        >
+        {% endassets %}
+        <!--google-fonts-->
+	    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css?family=Montserrat|Roboto" rel="stylesheet">
+
+    </head>
+
+    <body>
+        <div class="container">
+            <!--Nav-->
+            <nav class="navbar navbar-default fixed-top">
+                <!-- <a class="navbar-brand" href="/home">
+                    <img src="/static/img/logo.png">
+                </a> -->
+                <ul class="nav justify-content-end">
+                    <a class="nav-item nav-link" href="{{ url_for ('form_bp.login') }}">Login</a>
+                    <a class="nav-item nav-link" href="{{ url_for ('form_bp.register') }}">Sign Up</a>
+                </ul>
+            </nav>
+        </div>
+
+        <!--scripts-->
+        <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+        {% assets "home.js" %}
+        <script
+            src="{{ ASSET_URL }}"
+            type="text/babel"
+        ></script>
+        {% endassets %}
+    </body>
+</html>

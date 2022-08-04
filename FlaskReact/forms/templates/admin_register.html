@@ -1,0 +1,37 @@
+{% extends 'layouts/forms.html' %}
+{% from 'layouts/_formhelpers.html' import render_field %}
+
+{% block title %}Create Admin{% endblock %}
+{% block admin_css %}
+<link rel="stylesheet" type="text/css" href="/static/css/admin.css">
+{% endblock %}
+{% block content %}
+
+  <h1 class="lead">CREATE ADMIN ACCOUNT</h1>
+  <hr class="my-lead"> 
+
+  <form method="post" class="form">
+    {{ form.crsf_token }}
+
+    {{ form.hidden_tag() }}
+
+    {{ render_field (form.name, class = 'form-control first-input', placeholder = form.name.label.text, required = true, autofocus = true) }}
+      
+    {{ render_field (form.email, class = 'form-control', type='email', placeholder = form.email.label.text, required = true) }}
+        
+    {{ render_field (form.password, class= 'form-control', placeholder = form.password.label.text, required = true) }}
+     
+    {{ render_field (form.confirm, class= 'form-control last-input', placeholder = form.confirm.label.text, required = true) }}
+
+    {{ render_field (form.role, class= 'pull-left', required = true) }} 
+    <p class="terms">Is this an admin account</p>
+
+    
+    <input type="submit" value="Create Account" class="mdc-button mdc-button--raised next mdc-ripple-upgraded" style="
+    width: 99%;">
+
+    <h6 style="margin-top: 4%; text-align: center;">Already signed up? <a href="{{ url_for('adminlogin') }}"> Login </a></h6>
+  
+  </form>
+
+{% endblock %}

@@ -1,82 +1,54 @@
-# Flask React App
-[Flask](https://github.com/pallets/flask) is a lightweight WSGI web application framework. It is designed to make getting started quick and easy, with the ability to scale up to complex applications using several [plugins](https://github.com/humiaozuzu/awesome-flask).
-> Flask version used is 2.1.2
-## 1. [Virtual Environments](https://realpython.com/pipenv-guide/)
-Preference used in creating a virtual environment is pipenv. 
-- Install pipenv using pip:
-    > ```$ pip install pipenv```
-- Create virtual environment
-    > ```$ pipenv shell```
-- Install dependencies of your virtual environment from Pipfile: 
-    > ```$ pipenv install```
-- Installing using pipenv from requirements.txt
-    > ```$ pipenv install -r requirments.txt```
-- Lock dependencies to your Pipfile.lock file
-    > ```$ pipenv lock```
+# Flask React App - using React CDN (Version 1.0) with Flask Blueprints
+To understand the basics of React I have simply placed [CDN links on the HTML page](https://reactjs.org/docs/cdn-links.html) and routing it through a Flask Route and using Blueprints and Flask-Assets to compile assets and serve it on the frontend.
 
-## 2. [Project Layout for a Flask App](https://hackersandslackers.com/flask-application-factory/)
-Python projects use packages to organize code into multiple modules that can be imported where needed. 
+## Creating and Connecting to Database on MySQL
+Install the following dependencies after installing MySQL on local server
 
-For larger applications it’s a good idea to use a package instead of a module. 
+> ``` pipenv install flask-sqlalchemy pymysql python-dotenv mysql-connector mysql-connector-python ```
 
-> To convert simple packages into a larger one, just create a new folder yourapplication inside the existing one and move everything below it. The Flask-App project directory will contain another Flask-App directory inside the existing one and move everything below it.
+Create database using create_db.py and run it ***only once*** to create the database on MySQL or running it again will overwrite data on the current db if it was created previously. A brief breakdown of how create_db.py works:
 
-> Then rename yourapplication.py to ```__init__.py```. (Make sure to delete all .pyc files first, otherwise things would most likely break). 
-
-> Notice there's no ```app.py, main.py```, or anything of the sort in our base directory. Instead, the entirety of our app lives in the /Flask-App/FlaskApp folder, with the creation of our app happening in ```__init__.py```.
+### 1. Connecting to MySQL Server:
 ```
-/Flask-App (base directory)
-├── /FlaskApp
-│   ├── __init__.py (Application Factory where app is initialized)
-│   ├── auth.py
-│   ├── forms.py
-│   ├── models.py
-│   ├── routes.py
-│   ├── /static
-│   └── /templates
-│   └── /tests
-├── config.py (app configurations)
-└── wsgi.py (imports and serves as our app gateway)
+cnx = mysql.connector.connect(
+        user = environ.get('Db_Username'),
+        password = environ.get('Db_Password'),
+        host = environ.get('Db_Host')
+    )
 ```
+> [mysql.connector](https://dev.mysql.com/doc/connector-python/en/connector-python-example-connecting.html) object has a ```connect()``` constructor which creates a connection to the MySQL server and returns a MySQLConnection object
+### 2. Use [Cursor](https://dev.mysql.com/doc/connector-python/en/connector-python-example-ddl.html) to create database:
+> ``` my_cursor = cnx.cursor()```
 
-## 3. Structuring Flask App using Blueprints
-Blueprints are Flasks' python equivalent for modules which allows to structure your app by items of concern where several app features are organized as collections with standalone modules, services or classes.
-> Note: You would need register a blueprint. The downside is that you cannot unregister a blueprint once an application was created without having to destroy the whole application object.
+> The MySQLConnection object has a ```cursor() ``` method that allows one to execute MySQL statements. Using the cursor you can create the database that Flask will connect to.
 
-> While blueprints cannot access the templates or static files of their peers, they can utilize common assets to be shared across all blueprints (such as a layout.html template, or a general style.css file that applies to all parts of our app)
+## Creating tables in database
+Once the db has been created Flask can create models using SQLAlchemy through the ```config.py`` in the Config class which allows you to connect to the database and setup other configurations to the database.
 
-> While registering a blueprint using [app_context](https://flask.palletsprojects.com/en/2.1.x/appcontext/) using the ```current_app``` proxy which points to the application handling the current activity.
+At the ```__init__.py``` file the db SQLAlchemy object is created and using [app.context](https://flask-sqlalchemy.palletsprojects.com/en/2.x/contexts/) in the app factory you can initialize the db using the ```init_app()`` function.
+
+After db initialization and our app object has connected to the MySQL database your routes.py or forms.py can be used to manipulate the data that will persisted to the MySQL database. As an example, we create a test user from our ```forms.py``` file.
+> Create user through /register route in forms.py
 ```
-/flask-blueprint-tutorial
-├── /flask_blueprint_tutorial
-│   ├── __init__.py
-│   ├── assets.py
-│   ├── api.py
-│   ├── /home
-│   │   ├── /templates
-│   │   ├── /static
-│   │   └── routes.py
-│   ├── /profile
-│   │   ├── /templates
-│   │   ├── /static
-│   │   └── routes.py
-│   ├── /products
-│   │   ├── /templates
-│   │   ├── /static
-│   │   └── routes.py
-│   ├── /static 
-│   └── /templates
-├── config.py
-└── wsgi.py
+    username = "test"
+    email = "test@email"
+    if username and email:
+        new_user = User(
+            username=username,
+            email=email,
+            created=dt.now(),
+            bio="This is a test user",
+            admin=False
+        )
+        db.session.add(new_user)  # Adds new User record to database
+        db.session.commit()  # Commits all changes
 ```
-## [4. Ensuring Flask App config variables are in config.py](https://hackersandslackers.com/configure-flask-applications)
-This is where config variables are stated. Config variables areorganized set of instructions that are defined before our app is live.
-> Moreover, it's much easier to avoid compromising sensitive secrets such as AWS or database credentials when we manage these things in one place. Let's explore our better options.
-
-## [5. React with Flask Assets](https://flask-assets.readthedocs.io/en/latest/)
-Flask Assets allow you to compile your web assets into common files of concern depending on the page or route in quesiton allowing you to manage concerns adequately.
-
-## Credits
-1. Todd Birchard - [hackersandslackers Flask Tutorial](https://hackersandslackers.com/series/build-flask-apps/)
-2. Bob Ziroll - [Learn React For Beginners](https://scrimba.com/learn/learnreact)
-3. Real Python - [Flask Tutorial](https://realpython.com/python-web-applications-with-flask-part-i/)
+> Running the route will create the test user. You can confirm on teh MySQL database using the  ```SELECT * FROM User;``` command
+```
++----+----------+------------+---------------------+---------------------+-------+
+| id | username | email      | created             | bio                 | admin |
++----+----------+------------+---------------------+---------------------+-------+
+|  1 | test     | test@email | 2022-08-03 17:39:42 | This is a test user |     0 |
++----+----------+------------+---------------------+---------------------+-------+
+1 row in set (0.00 sec)
+```
