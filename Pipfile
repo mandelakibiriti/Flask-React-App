@@ -11,6 +11,11 @@ pymysql = "*"
 python-dotenv = "*"
 mysql-connector = "*"
 mysql-connector-python = "*"
+fastapi = "*"
+uvicorn = "*"
+jinja2 = "*"
+python-multipart = "*"
+pydantic = "*"
 
 [dev-packages]
 

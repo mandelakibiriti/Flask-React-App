@@ -35,3 +35,8 @@ def login():
         'login.html',
         static_folder = 'static'
     )
+
+@form_bp.route('/get_details')
+def get_details():
+    current_user = User.query.filter_by(username='test').first()
+    return make_response(f"{current_user.email}")

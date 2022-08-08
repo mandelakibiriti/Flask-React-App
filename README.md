@@ -1,54 +1,86 @@
-# Flask React App - using React CDN (Version 1.0) with Flask Blueprints
-To understand the basics of React I have simply placed [CDN links on the HTML page](https://reactjs.org/docs/cdn-links.html) and routing it through a Flask Route and using Blueprints and Flask-Assets to compile assets and serve it on the frontend.
+# Flask React App - using React CDN (Version 1.0) with FASTAPI
+To understand the basics of React I have simply placed CDN links on the HTML page and routing it through a Flask Route and using Blueprints and Flask-Assets to compile assets and serve it on the frontend
 
-## Creating and Connecting to Database on MySQL
-Install the following dependencies after installing MySQL on local server
-
-> ``` pipenv install flask-sqlalchemy pymysql python-dotenv mysql-connector mysql-connector-python ```
-
-Create database using create_db.py and run it ***only once*** to create the database on MySQL or running it again will overwrite data on the current db if it was created previously. A brief breakdown of how create_db.py works:
-
-### 1. Connecting to MySQL Server:
+## Setting up FAST API in Flask
+Integrating FASTAPI to handle REST API development with out of the box documentation of the APIs on the backend with Flask's expansive and extensible tooling to handle the WSGI aspects of the app.
+1. Install dependencies using the pipenv command
 ```
-cnx = mysql.connector.connect(
-        user = environ.get('Db_Username'),
-        password = environ.get('Db_Password'),
-        host = environ.get('Db_Host')
-    )
+pipenv install fastapi uvicorn python-multipart jinja2
 ```
-> [mysql.connector](https://dev.mysql.com/doc/connector-python/en/connector-python-example-connecting.html) object has a ```connect()``` constructor which creates a connection to the MySQL server and returns a MySQLConnection object
-### 2. Use [Cursor](https://dev.mysql.com/doc/connector-python/en/connector-python-example-ddl.html) to create database:
-> ``` my_cursor = cnx.cursor()```
 
-> The MySQLConnection object has a ```cursor() ``` method that allows one to execute MySQL statements. Using the cursor you can create the database that Flask will connect to.
+2. Import uvicorn in ``wsgi.py`` and use as below
+```
+if __name__ == "__main__":
+    uvicorn.run(app)
+```
 
-## Creating tables in database
-Once the db has been created Flask can create models using SQLAlchemy through the ```config.py`` in the Config class which allows you to connect to the database and setup other configurations to the database.
+3. Import FastAPI modules in ``__init__.py``
+> Initialize FastAPI app and mount it the flaskapp to FastAPI using the ``mount() and WSGIMiddleware()`` methods within the Flaskapp app_context function
+```
+app = FastAPI()
+flaskapp = Flask(__name__,instance_relative_config=False)
 
-At the ```__init__.py``` file the db SQLAlchemy object is created and using [app.context](https://flask-sqlalchemy.palletsprojects.com/en/2.x/contexts/) in the app factory you can initialize the db using the ```init_app()`` function.
+with flaskapp.app_context():
+    app.mount("/vf", WSGIMiddleware(flaskapp))
+```
 
-After db initialization and our app object has connected to the MySQL database your routes.py or forms.py can be used to manipulate the data that will persisted to the MySQL database. As an example, we create a test user from our ```forms.py``` file.
-> Create user through /register route in forms.py
+4. Modularized build with FastAPI Routers 
+> Akin to Flask Blueprint, FastAPI has Routers which you can use to modularize your build of the app. Under the routers folder you can create [several modules](https://fastapi.tiangolo.com/tutorial/bigger-applications/) to the FastAPI app.
 ```
-    username = "test"
-    email = "test@email"
-    if username and email:
-        new_user = User(
-            username=username,
-            email=email,
-            created=dt.now(),
-            bio="This is a test user",
-            admin=False
-        )
-        db.session.add(new_user)  # Adds new User record to database
-        db.session.commit()  # Commits all changes
+app.include_router(engine.router)
 ```
-> Running the route will create the test user. You can confirm on teh MySQL database using the  ```SELECT * FROM User;``` command
+5. Run the uvicorn command 
+> You can access the Flask routes form ``/vf/flask_route`` endpoint and ``/FastAPI_endpoint`` for FastAPI routes
+``` 
+ uvicorn wsgi:app
 ```
-+----+----------+------------+---------------------+---------------------+-------+
-| id | username | email      | created             | bio                 | admin |
-+----+----------+------------+---------------------+---------------------+-------+
-|  1 | test     | test@email | 2022-08-03 17:39:42 | This is a test user |     0 |
-+----+----------+------------+---------------------+---------------------+-------+
-1 row in set (0.00 sec)
+6. Connect FastAPI to its own SQL Database
+> Connect to MySQL database using SQLAlchemy ```create_engine()``` and ```connect()``` methods
 ```
+# Connector for FastAPI to MySQL
+engine = create_engine(
+    SQLALCHEMY_DATABASE_URL
+)
+
+conn_db = engine.connect()
+```
+> To carry out queries from the MySQL database you can use the ```execute()``` method which we can get the test_user details from the User table for data that is posted to database in Flask
+```
+conn_db.execute("SELECT * FROM user;").fetchall()
+```
+```
+{
+    "data key": [
+                    {
+                        "id": 3,
+                        "username": "test",
+                        "email": "test@email",
+                        "created": "2022-08-04T22:22:24",
+                        "bio": "This is a test user",
+                        "admin": 0
+                    }
+            ]
+}
+```
+> For data handling in FastAPI routers can used to query and post data to MySQL database using FastAPI models, schema and routes 
+```
+# Data posted to MySQL from FastAPI
+@router.post("/post_items/", response_model=schemas.Item)
+def create_item(
+    item: schemas.ItemCreate, db: Session = Depends(db_router.get_db)
+    ):
+    return db_router.create_item(db=db, item=item)
+
+# Get Data from MySQL from FastAPI
+@router.get("/get_items", response_model=list[schemas.Item])
+def read_item(
+    skip: int = 0, limit: int = 100, db: Session = Depends(db_router.get_db)
+    ):
+    items = db_router.get_items(db, skip=skip, limit=limit)
+    return items
+```
+Reads:
+1. [FastAPI vs Flask](https://www.netguru.com/blog/python-flask-versus-fastapi#:~:text=When%20you're%20building%20APIs,tooling%20built%20around%20that%20framework.)
+2. [Side by Side implementation of FastAPI and Flask](https://testdriven.io/blog/moving-from-flask-to-fastapi/#additional-features)
+3. [FastAPI with Flask](https://www.youtube.com/watch?v=KKT6VpTfk_0)
+4. [FastAPI with Relational Databases](https://www.youtube.com/watch?v=4Zy90rd0bkU)
