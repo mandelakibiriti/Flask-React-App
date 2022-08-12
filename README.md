@@ -1,4 +1,4 @@
-# Flask React App - using React CDN (Version 1.0) with FASTAPI
+# Flask React App - using React frontend (Version 2.0) with FASTAPI
 To have React as the frontend and Flask/FastAPI as the backend (server). 
 
 ## Setting up React with Flask
