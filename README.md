@@ -43,7 +43,7 @@ Run react with npm
 ```
 Data can be queried from FastAPI backend ('/') vs Flask backend('/vf/') based on route which data is fetched
 
-![React Page with FastAPI and Flask data](/Flask_React/Capture.png "React Page")
+![React Page with FastAPI and Flask data](Capture.png "React Page")
 
 Reads:
 1. [FastAPI vs Flask](https://www.netguru.com/blog/python-flask-versus-fastapi#:~:text=When%20you're%20building%20APIs,tooling%20built%20around%20that%20framework.)
