@@ -1,4 +1,4 @@
-from FlaskReact import create_app
+from server import create_app
 import uvicorn
 
 # Imports and starts App

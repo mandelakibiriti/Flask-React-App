@@ -5,7 +5,6 @@ name = "pypi"
 
 [packages]
 flask = "*"
-flask-assets = "*"
 flask-sqlalchemy = "*"
 pymysql = "*"
 python-dotenv = "*"
@@ -16,6 +15,7 @@ uvicorn = "*"
 jinja2 = "*"
 python-multipart = "*"
 pydantic = "*"
+cryptography = "*"
 
 [dev-packages]
 
